@@ -6,7 +6,7 @@
   <artifactId>io.trydent.snowflake</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>RichFX</name>
+  <name>Snowflake</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,8 +19,19 @@
   <dependencies>
     <dependency>
       <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>16-ea+2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>16-ea+2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>16-ea+2</version>
+      <classifier>linux</classifier>
     </dependency>
     <dependency>
       <groupId>org.fxmisc.richtext</groupId>
@@ -51,7 +62,7 @@
               <archive>
                 <manifest>
                   <mainClass>
-                    com.baeldung.executable.ExecutableMavenJar
+                    io.trydent.snowflake.Main
                   </mainClass>
                 </manifest>
               </archive>

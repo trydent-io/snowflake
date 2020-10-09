@@ -1,3 +1,4 @@
-io/trydent/Snowflake.class
-io/trydent/Snowflake$1.class
+io/trydent/snowflake/Snowflake.class
 module-info.class
+io/trydent/snowflake/Main.class
+io/trydent/snowflake/Snowflake$1.class

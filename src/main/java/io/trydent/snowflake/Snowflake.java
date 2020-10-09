@@ -1,4 +1,4 @@
-package io.trydent;
+package io.trydent.snowflake;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -77,11 +77,6 @@ public final class Snowflake extends Application {
     "",
     "}"
   });
-
-
-  public static void main(String[] args) {
-    launch(args);
-  }
 
   private CodeArea codeArea;
   private ExecutorService executor;
