@@ -16,23 +16,36 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>vanilla</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-base</artifactId>
+          <version>16-ea+2</version>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-controls</artifactId>
+          <version>16-ea+2</version>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-graphics</artifactId>
+          <version>16-ea+2</version>
+          <classifier>linux</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>embed</id>
+      <!-- JavaFX deps provided by Liberica JDK Full -->
+    </profile>
+  </profiles>
+
   <dependencies>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-base</artifactId>
-      <version>16-ea+2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>16-ea+2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-graphics</artifactId>
-      <version>16-ea+2</version>
-      <classifier>linux</classifier>
-    </dependency>
     <dependency>
       <groupId>org.fxmisc.richtext</groupId>
       <artifactId>richtextfx</artifactId>

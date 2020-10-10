@@ -1,4 +1,4 @@
-open module io.trydent.snowflake {
+module io.trydent.snowflake {
   requires org.fxmisc.richtext;
   requires javafx.base;
   requires javafx.graphics;
@@ -6,5 +6,6 @@ open module io.trydent.snowflake {
   requires flowless;
   requires reactfx;
 
+  opens io.trydent.snowflake;
   exports io.trydent.snowflake;
 }
