@@ -1,5 +1,5 @@
 open module io.trydent.snowflake {
-  requires lanterna;
+  requires com.googlecode.lanterna;
   requires org.fxmisc.richtext;
   requires javafx.base;
   requires javafx.graphics;
