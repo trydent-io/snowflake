@@ -6,6 +6,6 @@ public enum Main {
   ;
 
   public static void main(String[] args) {
-    launch(Snowflake.class);
+    launch(SnowflakeFx.class);
   }
 }

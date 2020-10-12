@@ -22,7 +22,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
 
-public final class Snowflake extends Application {
+public final class SnowflakeFx extends Application {
 
   private static final String[] KEYWORDS = new String[]{
     "abstract", "assert", "boolean", "break", "byte",
@@ -81,6 +81,10 @@ public final class Snowflake extends Application {
   private CodeArea codeArea;
   private ExecutorService executor;
 
+  public static void main(String[] args) {
+    launch(SnowflakeFx.class);
+  }
+
   @Override
   public void start(Stage primaryStage) {
     executor = Executors.newSingleThreadExecutor();
@@ -105,7 +109,7 @@ public final class Snowflake extends Application {
     codeArea.replaceText(0, 0, sampleCode);
 
     Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
-    scene.getStylesheets().add(Snowflake.class.getResource("java-keywords.css").toExternalForm());
+    scene.getStylesheets().add(SnowflakeFx.class.getResource("java-keywords.css").toExternalForm());
     primaryStage.setScene(scene);
     primaryStage.setTitle("Java Keywords Async Demo");
     primaryStage.show();
