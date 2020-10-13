@@ -1,4 +1,5 @@
-io/trydent/snowflake/Snowflake.class
+io/trydent/snowflake/SnowflakeFx.class
+io/trydent/snowflake/SnowflakeFx$1.class
 module-info.class
 io/trydent/snowflake/Main.class
-io/trydent/snowflake/Snowflake$1.class
+io/trydent/snowflake/SnowflakeCli.class

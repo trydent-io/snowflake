@@ -3,11 +3,12 @@ package io.trydent.snowflake;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.BorderLayout;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.EmptySpace;
-import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Separator;
@@ -19,13 +20,11 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import java.io.IOException;
 import java.util.List;
 
+import static com.googlecode.lanterna.gui2.BorderLayout.Location.CENTER;
+import static com.googlecode.lanterna.gui2.BorderLayout.Location.LEFT;
 import static com.googlecode.lanterna.gui2.Direction.HORIZONTAL;
-import static com.googlecode.lanterna.gui2.GridLayout.Alignment.BEGINNING;
-import static com.googlecode.lanterna.gui2.GridLayout.Alignment.CENTER;
-import static com.googlecode.lanterna.gui2.GridLayout.Alignment.END;
-import static com.googlecode.lanterna.gui2.GridLayout.createHorizontallyEndAlignedLayoutData;
-import static com.googlecode.lanterna.gui2.GridLayout.createHorizontallyFilledLayoutData;
-import static com.googlecode.lanterna.gui2.GridLayout.createLayoutData;
+import static com.googlecode.lanterna.gui2.Direction.VERTICAL;
+import static com.googlecode.lanterna.gui2.TextBox.Style.MULTI_LINE;
 import static com.googlecode.lanterna.gui2.Window.Hint.FULL_SCREEN;
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDialog;
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
@@ -35,36 +34,26 @@ public class SnowflakeCli {
     final var terminalFactory = new DefaultTerminalFactory();
     try (final var screen = terminalFactory.createScreen()) {
       screen.startScreen();
-      final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
-      final Window window = new BasicWindow("My Root Window");
+      final WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
+      final Window window = new BasicWindow(" * Snowflake * ");
       window.setHints(List.of(FULL_SCREEN));
-      final var contentPanel = new Panel(new GridLayout(2));
+      final var borderPanel = new Panel(new BorderLayout());
+      final var linearPanel = new Panel()
+        .setLayoutManager(new LinearLayout(VERTICAL).setSpacing(1))
+        .setLayoutData(CENTER);
 
-      final var gridLayout = (GridLayout) contentPanel.getLayoutManager();
-      gridLayout.setHorizontalSpacing(3);
+      final var title = new Label("This is a label on the left side");
+      title.setLayoutData(LEFT);
 
-      final var title = new Label("This is a label that spans two columns");
-      title.setLayoutData(
-        createLayoutData(
-          BEGINNING, // Horizontal alignment in the grid cell if the cell is larger than the component's preferred size
-          BEGINNING, // Vertical alignment in the grid cell if the cell is larger than the component's preferred size
-          true,       // Give the component extra horizontal space if available
-          false,        // Give the component extra vertical space if available
-          2,                  // Horizontal span
-          1)
-      );                  // Vertical span
-      contentPanel.addComponent(title);
+      borderPanel.addComponent(title);
+      borderPanel.addComponent(linearPanel);
 
-      contentPanel.addComponent(new Label("Text Box (aligned)"));
-      contentPanel.addComponent(new TextBox().setLayoutData(createLayoutData(BEGINNING, CENTER)));
+      linearPanel.addComponent(new TextBox(screen.getTerminalSize(), MULTI_LINE)
+        .setCaretWarp(true)
+        .setVerticalFocusSwitching(false)
+      );
 
-      contentPanel.addComponent(new Label("Password Box (right aligned)"));
-      contentPanel.addComponent(
-        new TextBox()
-          .setMask('*')
-          .setLayoutData(createLayoutData(END, CENTER)));
-
-      contentPanel.addComponent(new Label("Read-only Combo Box (forced size)"));
+      linearPanel.addComponent(new Label("Read-only Combo Box (forced size)"));
 
       final var readOnlyComboBox = new ComboBox<>(LanternaThemes.getRegisteredThemes());
       readOnlyComboBox.setReadOnly(true);
@@ -78,23 +67,16 @@ public class SnowflakeCli {
         )
       );
 
-      contentPanel.addComponent(readOnlyComboBox);
+      linearPanel.addComponent(readOnlyComboBox);
 
-      contentPanel.addComponent(new Label("Editable Combo Box (filled)"));
-      contentPanel.addComponent(
-        new ComboBox<>("Item #1", "Item #2", "Item #3", "Item #4")
-          .setReadOnly(false)
-          .setLayoutData(createHorizontallyFilledLayoutData(1)));
+      linearPanel.addComponent(new Button("Button", () -> showMessageDialog(gui, "MessageBox", "This is a message box", OK)));
 
-      contentPanel.addComponent(new Label("Button (centered)"));
-      contentPanel.addComponent(new Button("Button", () -> showMessageDialog(textGUI, "MessageBox", "This is a message box", OK)).setLayoutData(createLayoutData(CENTER, CENTER)));
+      linearPanel.addComponent(new EmptySpace());
+      linearPanel.addComponent(new Separator(HORIZONTAL));
+      linearPanel.addComponent(new Button("Close", window::close));
 
-      contentPanel.addComponent(new EmptySpace().setLayoutData(createHorizontallyFilledLayoutData(2)));
-      contentPanel.addComponent(new Separator(HORIZONTAL).setLayoutData(createHorizontallyFilledLayoutData(2)));
-      contentPanel.addComponent(new Button("Close", window::close).setLayoutData(createHorizontallyEndAlignedLayoutData(2)));
-
-      window.setComponent(contentPanel);
-      textGUI.addWindowAndWait(window);
+      window.setComponent(borderPanel);
+      gui.addWindowAndWait(window);
 
     } catch (IOException e) {
       e.printStackTrace();
