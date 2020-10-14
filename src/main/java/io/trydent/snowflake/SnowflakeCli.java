@@ -68,7 +68,7 @@ public class SnowflakeCli {
             )
           );
 
-          if (cursorX >= (textX + textWidth) - 1) {
+          if (cursorX > (textX + textWidth) - 1) {
             text.addLine("");
             text.setCaretPosition(text.getCaretPosition().getRow() + 1, textY + 1);
           }
