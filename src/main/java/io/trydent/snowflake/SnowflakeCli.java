@@ -55,7 +55,7 @@ public class SnowflakeCli {
         @Override
         public void onInput(final Window basePane, final KeyStroke keyStroke, final AtomicBoolean deliverEvent) {
           final var textWidth = text.getSize().getColumns();
-          final var textX = text.getPosition().getColumn() + 1;
+          final var textX = text.getPosition().getColumn();
           final var textY = text.getPosition().getRow();
           final var position = screen.getCursorPosition();
           final var cursorX = position.getColumn();
@@ -68,7 +68,7 @@ public class SnowflakeCli {
             )
           );
 
-          if (cursorX > (textX + textWidth) - 1) {
+          if (cursorX >= textX + textWidth) {
             text.addLine("");
             text.setCaretPosition(text.getCaretPosition().getRow() + 1, textY + 1);
           }
