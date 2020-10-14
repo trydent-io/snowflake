@@ -1,82 +1,103 @@
 package io.trydent.snowflake;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Border;
 import com.googlecode.lanterna.gui2.BorderLayout;
+import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Separator;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.WindowListener;
+import com.googlecode.lanterna.gui2.WindowListenerAdapter;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.googlecode.lanterna.gui2.BorderLayout.Location.CENTER;
 import static com.googlecode.lanterna.gui2.BorderLayout.Location.LEFT;
-import static com.googlecode.lanterna.gui2.Direction.HORIZONTAL;
+import static com.googlecode.lanterna.gui2.BorderLayout.Location.TOP;
 import static com.googlecode.lanterna.gui2.Direction.VERTICAL;
 import static com.googlecode.lanterna.gui2.TextBox.Style.MULTI_LINE;
 import static com.googlecode.lanterna.gui2.Window.Hint.FULL_SCREEN;
-import static com.googlecode.lanterna.gui2.dialogs.MessageDialog.showMessageDialog;
-import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
+import static com.googlecode.lanterna.screen.Screen.RefreshType.AUTOMATIC;
+import static com.googlecode.lanterna.screen.TabBehaviour.CONVERT_TO_TWO_SPACES;
 
 public class SnowflakeCli {
   public static void main(String[] args) {
     final var terminalFactory = new DefaultTerminalFactory();
     try (final var screen = terminalFactory.createScreen()) {
+      screen.refresh(AUTOMATIC);
       screen.startScreen();
+
+      screen.setTabBehaviour(CONVERT_TO_TWO_SPACES);
       final WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
-      final Window window = new BasicWindow(" * Snowflake * ");
+      final Window window = new BasicWindow("Snowflake");
       window.setHints(List.of(FULL_SCREEN));
-      final var borderPanel = new Panel(new BorderLayout());
-      final var linearPanel = new Panel()
-        .setLayoutManager(new LinearLayout(VERTICAL).setSpacing(1))
-        .setLayoutData(CENTER);
+      final var title = new Label("Size: ");
 
-      final var title = new Label("This is a label on the left side");
-      title.setLayoutData(LEFT);
+      final var text = new TextBox("", MULTI_LINE).setLayoutData(CENTER);
+      text.withBorder(Borders.singleLine("Heading"));
 
-      borderPanel.addComponent(title);
-      borderPanel.addComponent(linearPanel);
+      window.addWindowListener(new WindowListenerAdapter() {
+        @Override
+        public void onInput(final Window basePane, final KeyStroke keyStroke, final AtomicBoolean deliverEvent) {
+          final var textWidth = text.getSize().getColumns();
+          final var textX = text.getPosition().getColumn() + 1;
+          final var textY = text.getPosition().getRow();
+          final var position = screen.getCursorPosition();
+          final var cursorX = position.getColumn();
+          title.setText(
+            String.format(
+              "Columns: %d, cursor at: %d, position: %d",
+              textWidth,
+              cursorX,
+              textY
+            )
+          );
 
-      linearPanel.addComponent(new TextBox(screen.getTerminalSize(), MULTI_LINE)
-        .setCaretWarp(true)
-        .setVerticalFocusSwitching(false)
-      );
+          if (cursorX >= (textX + textWidth) - 1) {
+            text.addLine("");
+            text.setCaretPosition(text.getCaretPosition().getRow() + 1, textY + 1);
+          }
+        }
+      });
 
-      linearPanel.addComponent(new Label("Read-only Combo Box (forced size)"));
-
-      final var readOnlyComboBox = new ComboBox<>(LanternaThemes.getRegisteredThemes());
-      readOnlyComboBox.setReadOnly(true);
-      readOnlyComboBox.setPreferredSize(new TerminalSize(20, 1));
-
-      readOnlyComboBox.addListener((next, prev) ->
-        window.setTheme(
-          LanternaThemes.getRegisteredTheme(
-            readOnlyComboBox.getItem(next)
+      window.setComponent(
+        new Panel()
+          .setLayoutManager(new BorderLayout())
+          .addComponent(
+            new Panel(new LinearLayout(VERTICAL))
+              .setLayoutData(TOP)
+              .addComponent(title)
+              .addComponent(new EmptySpace())
           )
-        )
+          .addComponent(
+            new Panel()
+              .setLayoutManager(new BorderLayout())
+              .addComponent(
+                new Panel(new LinearLayout(VERTICAL))
+                  .setLayoutData(LEFT)
+                  .addComponent(new Label("Sono a sinistra"))
+                  .addComponent(new Button("Close", window::close))
+              )
+              .addComponent(text)
+          )
       );
-
-      linearPanel.addComponent(readOnlyComboBox);
-
-      linearPanel.addComponent(new Button("Button", () -> showMessageDialog(gui, "MessageBox", "This is a message box", OK)));
-
-      linearPanel.addComponent(new EmptySpace());
-      linearPanel.addComponent(new Separator(HORIZONTAL));
-      linearPanel.addComponent(new Button("Close", window::close));
-
-      window.setComponent(borderPanel);
       gui.addWindowAndWait(window);
+      screen.setCharacter(10, 10, new TextCharacter('Æ', TextColor.ANSI.MAGENTA, TextColor.ANSI.GREEN));
 
     } catch (IOException e) {
       e.printStackTrace();
