@@ -23,7 +23,10 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.googlecode.lanterna.gui2.BorderLayout.Location.CENTER;
@@ -91,7 +94,22 @@ public class SnowflakeCli {
                 new Panel(new LinearLayout(VERTICAL))
                   .setLayoutData(LEFT)
                   .addComponent(new Label("Sono a sinistra"))
-                  .addComponent(new Button("Close", window::close))
+                  .addComponent(new Button("Close", () -> {
+                    try {
+                      Files.writeString(
+                        Paths.get(
+                          System.getProperty("user.home"),
+                          UUID.randomUUID().toString() +
+                          ".txt"
+                        ),
+                        text.getText()
+                      );
+                    } catch (IOException e) {
+                      e.printStackTrace();
+                    } finally {
+                      window.close();
+                    }
+                  }))
               )
               .addComponent(text)
           )
