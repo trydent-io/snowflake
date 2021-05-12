@@ -6,6 +6,6 @@ public enum Main {
   ;
 
   public static void main(String[] args) {
-    launch(SnowflakeFx.class);
+    launch(io.artoo.anacleto.SnowflakeFx.class);
   }
 }

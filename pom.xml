@@ -9,11 +9,17 @@
   <name>Snowflake</name>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     <java.version>15</java.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <java.release>15</java.release>
+
+    <maven.max.version>3.6.2</maven.max.version>
+    <maven.min.version>3.3.9</maven.min.version>
+
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.release}</maven.compiler.target>
+
+    <encoding>UTF-8</encoding>
+    <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
   </properties>
 
   <profiles>
@@ -60,6 +66,16 @@
 
   <dependencies>
     <dependency>
+      <groupId>io.artoo</groupId>
+      <artifactId>io.artoo.lance</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+      <version>4.0.0.Beta3</version>
+    </dependency>
+    <dependency>
       <groupId>com.googlecode.lanterna</groupId>
       <artifactId>lanterna</artifactId>
       <version>3.2.0-alpha1</version>
@@ -78,6 +94,19 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.0</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <compilerArgs>
+            <arg>--enable-preview</arg>
+          </compilerArgs>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -90,6 +119,7 @@
               <goal>single</goal>
             </goals>
             <configuration>
+              <finalName>snowflake</finalName>
               <archive>
                 <manifest>
                   <mainClass>

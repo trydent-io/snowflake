@@ -1,83 +1,45 @@
 package io.trydent.snowflake;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Border;
-import com.googlecode.lanterna.gui2.BorderLayout;
-import com.googlecode.lanterna.gui2.Borders;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.EmptySpace;
-import com.googlecode.lanterna.gui2.Label;
-import com.googlecode.lanterna.gui2.LinearLayout;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.WindowListener;
-import com.googlecode.lanterna.gui2.WindowListenerAdapter;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import io.trydent.snowflake.ui.Canvas;
+import io.trydent.snowflake.ui.Label;
+import io.trydent.snowflake.ui.Modal;
+import io.trydent.snowflake.ui.Section;
+import io.trydent.snowflake.ui.text.Text;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.googlecode.lanterna.gui2.BorderLayout.Location.CENTER;
-import static com.googlecode.lanterna.gui2.BorderLayout.Location.LEFT;
-import static com.googlecode.lanterna.gui2.BorderLayout.Location.TOP;
-import static com.googlecode.lanterna.gui2.Direction.VERTICAL;
-import static com.googlecode.lanterna.gui2.TextBox.Style.MULTI_LINE;
-import static com.googlecode.lanterna.gui2.Window.Hint.FULL_SCREEN;
 import static com.googlecode.lanterna.screen.Screen.RefreshType.AUTOMATIC;
 import static com.googlecode.lanterna.screen.TabBehaviour.CONVERT_TO_TWO_SPACES;
+import static io.trydent.snowflake.ui.Attribute.*;
+import static io.trydent.snowflake.ui.Attribute.title;
 
 public class SnowflakeCli {
   public static void main(String[] args) {
-    final var terminalFactory = new DefaultTerminalFactory();
-    try (final var screen = terminalFactory.createScreen()) {
+    final var terminal = new DefaultTerminalFactory();
+    try (final var screen = terminal.createScreen()) {
       screen.refresh(AUTOMATIC);
       screen.startScreen();
 
       screen.setTabBehaviour(CONVERT_TO_TWO_SPACES);
-      final WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
-      final Window window = new BasicWindow("Snowflake");
-      window.setHints(List.of(FULL_SCREEN));
-      final var title = new Label("Size: ");
 
-      final var text = new TextBox("", MULTI_LINE).setLayoutData(CENTER);
-      text.withBorder(Borders.singleLine("Heading"));
-
-      window.addWindowListener(new WindowListenerAdapter() {
-        @Override
-        public void onInput(final Window basePane, final KeyStroke keyStroke, final AtomicBoolean deliverEvent) {
-          final var textWidth = text.getSize().getColumns();
-          final var textX = text.getPosition().getColumn();
-          final var textY = text.getPosition().getRow();
-          final var position = screen.getCursorPosition();
-          final var cursorX = position.getColumn();
-          title.setText(
-            String.format(
-              "Columns: %d, cursor at: %d, position: %d",
-              textWidth,
-              cursorX,
-              textY
+      Canvas.textUI(
+        screen,
+        Modal.fullscreen(
+          title.val("Snowflake"),
+          content.val(
+            Section.borderLayout(
+              top.val(
+                Label.basic("Ciao a tutti")
+              ),
+              center.val(
+                Text.area()
+              )
             )
-          );
-
-          if (cursorX >= textX + textWidth) {
-            text.addLine("");
-            text.setCaretPosition(text.getCaretPosition().getRow() + 1, textY + 1);
-          }
-        }
-      });
-
+          )
+        )
+      );
+/*
       window.setComponent(
         new Panel()
           .setLayoutManager(new BorderLayout())
@@ -100,9 +62,9 @@ public class SnowflakeCli {
                         Paths.get(
                           System.getProperty("user.home"),
                           UUID.randomUUID().toString() +
-                          ".txt"
+                            ".txt"
                         ),
-                        text.getText()
+                        textArea.ofType(TextBox.class).yield().getText()
                       );
                     } catch (IOException e) {
                       e.printStackTrace();
@@ -111,11 +73,10 @@ public class SnowflakeCli {
                     }
                   }))
               )
-              .addComponent(text)
+              .addComponent(textArea.yield())
           )
       );
-      gui.addWindowAndWait(window);
-      screen.setCharacter(10, 10, new TextCharacter('Æ', TextColor.ANSI.MAGENTA, TextColor.ANSI.GREEN));
+      gui.addWindowAndWait(window);*/
 
     } catch (IOException e) {
       e.printStackTrace();
